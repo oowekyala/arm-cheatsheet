@@ -1,23 +1,20 @@
 \documentclass[a4paper,twoside,10pt]{article}
 
-
-\usepackage{colorschemes}
+\usepackage[utf8]{inputenc}
 \usepackage{geometry}
 \usepackage{listings}
 \usepackage{lstlangarm}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{graphicx}
+\usepackage{xcolor}
 
-
-\setmodelscheme{grisnuance}
 
 \lstset{
 	language=[ARM]Assembler,
 	tabsize=2,
 	backgroundcolor = \color{gray!10},
-	}
-
+}
 
 \geometry{
 	top 	= .75cm,
@@ -35,33 +32,17 @@
 \begin{document}
 \small
 
-
-
-
-
-	\def\instruction#1#2#3{&\texttt{#1} & #2 & \small #3 \\}
+	\def\instruction#1#2#3{&\texttt{#1} & #2 &\small #3 \\}
 	
-	\def\cdS{\textcolor{gray}{\rmfamily\emph{cd}\texttt{S}}}
-	\def\cdB{\textcolor{gray}{\rmfamily\emph{cd}\texttt{B}}}
-	\def\cdum{\rmfamily\itshape\textcolor{gray}{cd}um}
-	\def\cd{\textcolor{gray}{\rmfamily\emph{cd}}}
+	\def\cdS{\cd\option{\texttt{S}}}
+	\def\cdB{\cd\option{\texttt{B}}}
+	\def\cdum{\rmfamily\itshape\cd um}
+	\def\cd{\option{\rmfamily\emph{cd}}}
 	
 	\def\svarkword#1{\emph{\textrm{#1}}}
+	\def\kword#1{\texttt{#1}}
 
-
-
-\def\varkword#1{\emph{\textrm{#1}}} % Variable keyword (argument)
-\def\option#1{\textcolor{gray}{#1}}
-			
-\def\kword#1{\texttt{#1}}
-\def\mkword#1{\texttt{#1}}
-
-\def\ie{\emph{i.e.}\xspace}
-\def\eg{\emph{e.g.}\xspace}
-
-
-\newif\ifmulticol
-	
+	\def\option#1{\textcolor{gray}{#1}}	
 
 	\newcommand{\reg}[1][]{\svarkword{reg\textsubscript{#1}}}
 	\newcommand{\imm}[1][]{\svarkword{imm}\textsubscript{\textrm{\upshape{#1}}}}
@@ -129,10 +110,6 @@
 			& \multicolumn{3}{r}{\footnotesize \textsuperscript{$\dagger$} \kword{S} = set condition flags\hspace{1cm}  \textsuperscript{$\ddagger$} \kword{B} = byte, can be replaced by \kword{H} for half word(2 bytes)} \\
 		\end{tabular}
 			
-		
-	%	\caption{ARM instructions}
-	%	\label{tab:directives}
-				
 	\end{table}
 	
 	\def\code#1#2#3{\texttt{#1} & \small #2 & #3\\}
@@ -149,8 +126,8 @@
 				\code{AL \textrm{or omitted}}{always}{(ignored)}
 				\code{EQ}{equal}{Z = 1}
 				\code{NE}{not equal}{Z = 0}
-				\code{CS}{carry set (same as \kword{HS})}{C = 1}
-				\code{CC}{carry clear (same as \kword{LO})}{C = 0}
+				\code{CS}{carry set (same as \texttt{HS})}{C = 1}
+				\code{CC}{carry clear (same as \texttt{LO})}{C = 0}
 				\code{MI}{minus}{N = 1}
 				\code{PL}{positive or zero}{N = 0}
 				\code{VS}{overflow}{V = 1}
@@ -240,46 +217,5 @@
 
 
 \end{document}
-%
-%\begin{minipage}{.436\textwidth}
-		%
-			%\begin{tabular}{p{.5cm}@{\hspace{5mm}}p{7cm}}
-					%%
-				%\multicolumn{2}{c}{\bfseries \emph{um}: update mode} \\
-				%\hline
-					%%
-					%\code{FA}{ascending, starting from \reg}
-					%\code{EA}{ascending, starting from \reg + 4}
-					%\code{FD}{descending, starting from \reg}
-					%\code{ED}{ascending, starting from \reg - 4}\hline
-			%\end{tabular}
-			%\vspace{.715cm}
-			%
-			%\begin{tabular}{p{2cm}@{}p{6cm}}
-					%%
-				%\multicolumn{2}{c}{\bfseries \emph{reg}: register} \\
-				%\hline
-					%%
-					%\code{R0 \textrm{to} R15}{register according to number}
-					%\code{SP}{register 13}
-					%\code{LR}{register 14}
-					%\code{PC}{register 15}\hline
-			%\end{tabular}
-			%
-			%\vspace{.715cm}
-			%\def\code#1#2{#1 & #2 \\}
-			%
-			%\begin{tabular}{p{1.5cm}@{}p{6.5cm}}
-				%%
-				%\multicolumn{2}{c}{\bfseries \emph{arg}: right-hand argument} \\
-				%\hline
-					%%
-				%\code{\#\imm[8]}{immediate on 8 bits, possibly rotated right}
-				%\code{\reg}{register}
-				%\code{\reg, \shift}{register shifted by distance}\hline
-			%\end{tabular}
-		%
-		%\end{minipage}
-
 
 
