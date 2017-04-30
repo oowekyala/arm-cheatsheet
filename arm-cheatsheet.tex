@@ -1,0 +1,285 @@
+\documentclass[a4paper,twoside,10pt]{article}
+
+
+\usepackage{colorschemes}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{lstlangarm}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{graphicx}
+
+
+\setmodelscheme{grisnuance}
+
+\lstset{
+	language=[ARM]Assembler,
+	tabsize=2,
+	backgroundcolor = \color{gray!10},
+	}
+
+
+\geometry{
+	top 	= .75cm,
+	bottom 	= .5cm,
+	inner 	= .75cm,
+	outer 	= 1cm,
+}
+
+
+\usepackage{tgcursor}
+%\usepackage{showframe}
+
+
+\usepackage[T1]{fontenc}
+\begin{document}
+\small
+
+
+
+
+
+	\def\instruction#1#2#3{&\texttt{#1} & #2 & \small #3 \\}
+	
+	\def\cdS{\textcolor{gray}{\rmfamily\emph{cd}\texttt{S}}}
+	\def\cdB{\textcolor{gray}{\rmfamily\emph{cd}\texttt{B}}}
+	\def\cdum{\rmfamily\itshape\textcolor{gray}{cd}um}
+	\def\cd{\textcolor{gray}{\rmfamily\emph{cd}}}
+	
+	\def\svarkword#1{\emph{\textrm{#1}}}
+
+
+
+\def\varkword#1{\emph{\textrm{#1}}} % Variable keyword (argument)
+\def\option#1{\textcolor{gray}{#1}}
+			
+\def\kword#1{\texttt{#1}}
+\def\mkword#1{\texttt{#1}}
+
+\def\ie{\emph{i.e.}\xspace}
+\def\eg{\emph{e.g.}\xspace}
+
+
+\newif\ifmulticol
+	
+
+	\newcommand{\reg}[1][]{\svarkword{reg\textsubscript{#1}}}
+	\newcommand{\imm}[1][]{\svarkword{imm}\textsubscript{\textrm{\upshape{#1}}}}
+	\def\shift{\svarkword{shift}}
+	\def\arg{\svarkword{arg}}
+	\def\mem{\svarkword{mem}}
+	\def\mreg{\svarkword{mreg}}
+	\def\ss#1{\svarkword{\textsubscript{#1}}}
+	
+	
+	\renewcommand{\arraystretch}{1}
+
+
+	\begin{table}[p!]\centering
+				
+		\begin{tabular}{p{.5cm}l@{\hspace{2mm}}l@{\hspace{.5cm}}l}
+				%
+			\multicolumn{4}{c}{\bfseries ARM Instructions} \\
+			\hline
+				%
+			\parbox[t]{2mm}{\multirow{12}{2.5cm}{\rotatebox[origin=c]{90}{\parbox{5cm}{\bfseries\centering Arithmetic}}}}%
+				\instruction{ADD\cdS\textsuperscript{$\dagger$}}{\reg, \reg, \arg}{add}
+				\instruction{SUB\cdS}{\reg, \reg, \arg}{subtract}
+				\instruction{RSB\cdS}{\reg, \reg, \arg}{subtract reversed operands}
+				\instruction{ADC\cdS}{\reg, \reg, \arg}{add both operands and carry flag}
+				\instruction{SBC\cdS}{\reg, \reg, \arg}{subtract both operands and adds carry flag${}-1$}
+				\instruction{RSC\cdS}{\reg, \reg, \arg}{reverse subtract both operands and adds carry flag${}-1$}
+				\instruction{MUL\cdS}{\reg\ss{d}, \reg\ss{m}, \reg[s]}{multiply \reg[m] and \reg[s], places lower 32 bits into \reg[d]}
+				\instruction{MLA\cdS}{\reg[d], \reg[m], \reg[s], \reg[n]}{places lower 32 bits of \reg[m] · \reg[s] + \reg[n] into \reg[d]}
+				\instruction{UMULL\cdS}{\reg[lo], \reg[hi], \reg[m], \reg[s]}{multiply \reg[m] and \reg[s] place 64-bit unsigned result into \{\reg[hi], \reg[lo]\}}
+				\instruction{UMLAL\cdS}{\reg[lo], \reg[hi], \reg[m], \reg[s]}{place unsigned \reg[m] ${}\cdot{}$ \reg[s] + \{\reg[hi], \reg[lo]\} into \{\reg[hi], \reg[lo]\}}
+				\instruction{SMULL\cdS}{\reg[lo], \reg[hi], \reg[m], \reg[s]}{multiply \reg[m] and \reg[s], place 64-bit signed result into \{\reg[hi], \reg[lo]\}}
+				\instruction{SMLAL\cdS}{\reg[lo], \reg[hi], \reg[m], \reg[s]}{place signed \reg[m] ${}\cdot{}$ \reg[s] ${}+{}$ \{\reg[hi], \reg[lo]\} into \{\reg[hi], \reg[lo]\}}
+				
+			\hline
+			\parbox[t]{2mm}{\multirow{4}{2.5cm}{\rotatebox[origin=c]{90}{\parbox{1.25cm}{\bfseries\centering Bitwise logic}}}}%
+				\instruction{AND\cdS}{\reg, \reg, \arg}{bitwise AND}
+				\instruction{ORR\cdS}{\reg, \reg, \arg}{bitwise OR}
+				\instruction{EOR\cdS}{\reg, \reg, \arg}{bitwise exclusive-OR}
+				\instruction{BIC\cdS}{\reg, \reg[a], \arg\ss{b}}{bitwise \reg[a] AND (NOT \arg\ss{b})}
+			\hline
+			\parbox[t]{2mm}{\multirow{4}{2.5cm}{\rotatebox[origin=c]{90}{\parbox{1.25cm}{\bfseries\centering Comp-\linebreak arison}}}}%
+				\instruction{CMP\cd}{\reg, \arg}{update flags based on subtraction}
+				\instruction{CMN\cd}{\reg, \arg}{update flags based on addition}
+				\instruction{TST\cd}{\reg, \arg}{update flags based on bitwise AND}
+				\instruction{TEQ\cd}{\reg, \arg}{update flags based on bitwise exclusive-OR}
+			\hline
+			\parbox[t]{2mm}{\multirow{2}{1cm}{\hspace{-1.7cm}\bfseries Data movement}}%
+				\instruction{MOV\cdS}{\reg, \arg}{copy argument}
+				\instruction{MVN\cdS}{\reg, \arg}{copy bitwise NOT of argument}
+			\hline
+			\parbox[t]{2mm}{\multirow{5}{2.5cm}{\rotatebox[origin=c]{90}{\parbox{1.75cm}{\bfseries\centering Memory access}}}}%
+				\instruction{LDR\cdB\textsuperscript{$\ddagger$}}{\reg, \mem}{loads word/ byte/ half from memory into a register}
+				\instruction{STR\cdB}{\reg, \mem}{stores word/ byte/ half to memory from a register}
+				\instruction{LDM\cdum}{\reg\option{!}, \mreg}{loads into multiple registers}
+				\instruction{STM\cdum}{\reg\option{!}, \mreg}{stores multiple registers}
+				\instruction{SWP\cdB}{\reg[d], \reg[m], [\reg[n]]}{copies \reg[m] to memory at \reg[n], old value at address \reg[n] to \reg[d]}
+			\hline
+			\parbox[t]{2mm}{\multirow{5}{2.5cm}{\rotatebox[origin=c]{90}{\parbox{1cm}{\bfseries\centering Branch-ing}}}}%
+				\instruction{B\cd}{\imm[24]}{branch to \imm[24] words away}
+				\instruction{BL\cd}{\imm[24]}{copy PC to LR, then branch}
+				\instruction{BX\cd}{\reg}{copy \reg\ to PC, and exchange instruction sets (T flag := \reg{[}0])}
+				\instruction{SWI\cd}{\imm[24]}{software interrupt}
+			\hline
+			& \multicolumn{3}{r}{\footnotesize \textsuperscript{$\dagger$} \kword{S} = set condition flags\hspace{1cm}  \textsuperscript{$\ddagger$} \kword{B} = byte, can be replaced by \kword{H} for half word(2 bytes)} \\
+		\end{tabular}
+			
+		
+	%	\caption{ARM instructions}
+	%	\label{tab:directives}
+				
+	\end{table}
+	
+	\def\code#1#2#3{\texttt{#1} & \small #2 & #3\\}
+	
+	
+	\begin{table}[p!]\centering
+				
+		
+		\begin{tabular}{l@{\hspace{5mm}}ll}
+				%
+			\multicolumn{3}{c}{\bfseries \emph{cd}: condition code} \\
+			\hline
+				%
+				\code{AL \textrm{or omitted}}{always}{(ignored)}
+				\code{EQ}{equal}{Z = 1}
+				\code{NE}{not equal}{Z = 0}
+				\code{CS}{carry set (same as \kword{HS})}{C = 1}
+				\code{CC}{carry clear (same as \kword{LO})}{C = 0}
+				\code{MI}{minus}{N = 1}
+				\code{PL}{positive or zero}{N = 0}
+				\code{VS}{overflow}{V = 1}
+				\code{VC}{no overflow}{V = 0}
+				\code{HS}{unsigned higher or same}{C = 1}
+				\code{LO}{unsigned lower}{C = 0}
+				\code{HI}{unsigned higher}{C = 1 $\wedge$ Z = 0}
+				\code{LS}{unsigned lower or same}{C = 0 $\vee$ Z = 1}
+				\code{GE}{signed greater than or equal}{N = V}
+				\code{LT}{signed less than}{N $\neq$ V}
+				\code{GT}{signed greater than}{Z = 0 $\wedge$ N = V}
+				\code{LE}{signed less than or equal}{Z = 1 $\vee$ N $\neq$ V}\hline
+				
+		\end{tabular}
+		\hfill
+		\def\code#1#2{\texttt{#1} &\small #2 \\}
+		\begin{tabular}{l@{\hspace{5mm}}l}
+			%
+			\multicolumn{2}{c}{\bfseries \emph{um}: update mode} \\
+			\hline
+					%
+			\code{FA / IB}{ascending, starting from \reg}
+			\code{EA / IA}{ascending, starting from \reg ${}+{} 4$}
+			\code{FD / DB}{descending, starting from \reg}
+			\code{ED / DA}{descending, starting from \reg ${}- 4$}\hline
+			&\\
+			&\\
+			\multicolumn{2}{c}{\bfseries \emph{reg}: register} \\
+			\hline
+					%
+			\code{R0 \textrm{to} R15}{register according to number}
+			\code{SP}{register 13}
+			\code{LR}{register 14}
+			\code{PC}{register 15}\hline
+			&\\
+			&\\
+			\multicolumn{2}{c}{\bfseries \emph{arg}: right-hand argument} \\
+			\hline
+				%
+			\code{\#\imm[8]}{immediate on 8 bits, possibly rotated right}
+			\code{\reg}{register}
+			\code{\reg, \shift}{register shifted by distance}\hline
+		\end{tabular}
+				
+	\end{table}
+	
+	\def\code#1#2{\texttt{#1} & \small #2 \\}
+	\begin{table}
+	
+		\begin{tabular}{l@{\hspace{3mm}}l}
+					%
+			\multicolumn{2}{c}{\bfseries \emph{shift}: shift register value} \\
+			\hline
+			%
+			\code{LSL \#\imm[5]}{shift left 0 to 31}
+			\code{LSR \#\imm[5]}{logical shift right 1 to 32}
+			\code{ASR \#\imm[5]}{arithmetic shift right 1 to 32}
+			\code{ROR \#\imm[5]}{rotate right 1 to 31}
+			\code{RRX}{rotate carry bit into top bit}
+			\code{LSL \reg}{shift left by register}
+			\code{LSR \reg}{logical shift right by register}
+			\code{ASR \reg}{arithmetic shift right by register}
+			\code{ROR \reg}{rotate right by register}\hline
+			\multicolumn{2}{r}{}\\
+		\end{tabular}
+		\hfill
+		\begin{tabular}{l@{\hspace{3mm}}l}
+					%
+			\multicolumn{2}{c}{\bfseries \emph{mem}: memory address} \\
+			\hline
+			%
+			\code{[\reg,\#\textcolor{gray}{$\pm$}\imm[12]]}{\reg\ offset by constant}
+			\code{[\reg,\textcolor{gray}{$\pm$}\reg]}{\reg\ offset by variable bytes}
+			\code{[\reg[a],\textcolor{gray}{$\pm$}\reg[b],\shift]}{\reg[a]\ offset by shifted variable \reg[b]\ \textsuperscript{$\dagger$}}
+			\code{[\reg,\#\textcolor{gray}{$\pm$}\imm[12]]!}{update \reg\ by constant, then access memory}
+			\code{[\reg,\textcolor{gray}{$\pm$}\reg]!}{update \reg\ by variable bytes, then access memory}
+			\code{[\reg,\textcolor{gray}{$\pm$}\reg,\shift]!}{update \reg\ by shifted variable, then access memory\ \textsuperscript{$\dagger$}}
+			\code{[\reg],\#\textcolor{gray}{$\pm$}\imm[12]}{access address \reg, then update \reg\ by offset}
+			\code{[\reg],\textcolor{gray}{$\pm$}\reg}{access address \reg, then update \reg\ by variable}
+			\code{[\reg],\textcolor{gray}{$\pm$}\reg,\shift}{access address \reg, then update \reg\ by shifted variable\ \textsuperscript{$\dagger$}}\hline
+			\multicolumn{2}{r}{\footnotesize \textsuperscript{$\dagger$} shift distance must be by constant} \\
+		\end{tabular}
+	
+	\end{table}
+	
+
+
+
+\end{document}
+%
+%\begin{minipage}{.436\textwidth}
+		%
+			%\begin{tabular}{p{.5cm}@{\hspace{5mm}}p{7cm}}
+					%%
+				%\multicolumn{2}{c}{\bfseries \emph{um}: update mode} \\
+				%\hline
+					%%
+					%\code{FA}{ascending, starting from \reg}
+					%\code{EA}{ascending, starting from \reg + 4}
+					%\code{FD}{descending, starting from \reg}
+					%\code{ED}{ascending, starting from \reg - 4}\hline
+			%\end{tabular}
+			%\vspace{.715cm}
+			%
+			%\begin{tabular}{p{2cm}@{}p{6cm}}
+					%%
+				%\multicolumn{2}{c}{\bfseries \emph{reg}: register} \\
+				%\hline
+					%%
+					%\code{R0 \textrm{to} R15}{register according to number}
+					%\code{SP}{register 13}
+					%\code{LR}{register 14}
+					%\code{PC}{register 15}\hline
+			%\end{tabular}
+			%
+			%\vspace{.715cm}
+			%\def\code#1#2{#1 & #2 \\}
+			%
+			%\begin{tabular}{p{1.5cm}@{}p{6.5cm}}
+				%%
+				%\multicolumn{2}{c}{\bfseries \emph{arg}: right-hand argument} \\
+				%\hline
+					%%
+				%\code{\#\imm[8]}{immediate on 8 bits, possibly rotated right}
+				%\code{\reg}{register}
+				%\code{\reg, \shift}{register shifted by distance}\hline
+			%\end{tabular}
+		%
+		%\end{minipage}
+
+
+
